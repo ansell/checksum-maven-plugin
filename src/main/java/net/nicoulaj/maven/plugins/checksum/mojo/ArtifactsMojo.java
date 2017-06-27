@@ -140,6 +140,10 @@ public class ArtifactsMojo
         {
             files.add( new ChecksumFile( "", project.getArtifact().getFile() ) );
         }
+        else if ( !quiet )
+        {
+            getLog().debug( "Project artifact file not included: " + project.getArtifact() );
+        }
 
         // Add projects attached.
         if ( project.getAttachedArtifacts() != null )
@@ -168,6 +172,21 @@ public class ArtifactsMojo
     {
         // Make sure the file exists.
         boolean hasValidFile = artifact != null && artifact.getFile() != null && artifact.getFile().exists();
+
+        if ( !hasValidFile && !quiet )
+        {
+            if ( artifact != null )
+            {
+                if ( artifact.getFile() == null )
+                {
+                    getLog().debug( "Artifact did not have any file attached: " + artifact );
+                }
+                else if ( !artifact.getFile().exists() )
+                {
+                    getLog().debug( "Artifact file does not exist: " + artifact.getFile() );
+                }
+            }
+        }
 
         // Exclude project POM file.
         hasValidFile = hasValidFile && !artifact.getFile().getPath().equals( project.getFile().getPath() );
